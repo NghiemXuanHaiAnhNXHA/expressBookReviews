@@ -1,6 +1,9 @@
 const axios = require('axios');
 
-// Helper function to handle responses
+/**
+ * Helper function to handle HTTP responses consistently.
+ * Prints user-friendly messages depending on the status code.
+ */
 function handleResponse(response, context) {
   if (response.status === 200) {
     console.log(`${context}:`, response.data);
@@ -11,7 +14,10 @@ function handleResponse(response, context) {
   }
 }
 
-// Get books by author
+/**
+ * Retrieves all books written by a given author.
+ * @param {string} author - The name of the author to search for.
+ */
 async function getBooksByAuthor(author) {
   try {
     const response = await axios.get(`http://localhost:5000/books?author=${author}`);
@@ -21,7 +27,10 @@ async function getBooksByAuthor(author) {
   }
 }
 
-// Get books by title
+/**
+ * Retrieves all books that match a given title.
+ * @param {string} title - The title of the book to search for.
+ */
 async function getBooksByTitle(title) {
   try {
     const response = await axios.get(`http://localhost:5000/books?title=${title}`);
@@ -31,7 +40,10 @@ async function getBooksByTitle(title) {
   }
 }
 
-// Get books by ISBN
+/**
+ * Retrieves a book by its ISBN number.
+ * @param {string} isbn - The ISBN of the book to search for.
+ */
 async function getBooksByISBN(isbn) {
   try {
     const response = await axios.get(`http://localhost:5000/books/${isbn}`);
@@ -41,7 +53,7 @@ async function getBooksByISBN(isbn) {
   }
 }
 
-// Example calls (comment out before submission if needed)
+// Example calls (comment out before submission if not needed)
 getBooksByAuthor("John Doe");
 getBooksByTitle("Node Basics");
 getBooksByISBN("1234567890");
