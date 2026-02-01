@@ -1,68 +1,157 @@
-// Import Axios for making HTTP requests
+/**
+ * general.js
+ * 
+ * This module demonstrates how to retrieve book details from the ExpressBookReview API
+ * using async/await with Axios. It includes functions to query books by author, title,
+ * and ISBN, plus additional helper functions for reviews and error handling.
+ * 
+ * Requirements covered:
+ * - getBooksByAuthor
+ * - getBooksByTitle
+ * - getBooksByISBN
+ * 
+ * Extra features:
+ * - getAllBooks
+ * - getBookReviews
+ * - addOrUpdateReview
+ * - deleteReview
+ * - centralized error handling
+ */
+
 const axios = require('axios');
 
+// Base URL for the API
+const BASE_URL = "http://localhost:5000";
+
 /**
- * Helper function to handle HTTP responses consistently.
- * It checks the status code and prints user-friendly messages.
- * @param {object} response - Axios response object
- * @param {string} context - Description of the request (author/title/ISBN)
+ * Centralized error handler to ensure consistent logging.
+ * @param {Error} error - The error object thrown by Axios or runtime.
+ * @param {string} context - Description of the operation being attempted.
  */
-function handleResponse(response, context) {
-  if (response.status === 200) {
-    console.log(`${context}:`, response.data);
-  } else if (response.status === 404) {
-    console.log(`${context}: Not found`);
+function handleError(error, context) {
+  if (error.response) {
+    // Server responded with a status code outside 2xx
+    console.error(`${context} failed with status ${error.response.status}:`, error.response.data);
+  } else if (error.request) {
+    // Request was made but no response received
+    console.error(`${context} failed: No response received`, error.request);
   } else {
-    console.log(`${context}: Unexpected error (status ${response.status})`);
+    // Something else happened
+    console.error(`${context} failed:`, error.message);
   }
 }
 
 /**
- * Retrieves all books written by a given author.
- * Example: getBooksByAuthor("John Doe")
- * @param {string} author - The name of the author to search for
+ * Retrieves all books in the database.
+ */
+async function getAllBooks() {
+  try {
+    const response = await axios.get(`${BASE_URL}/books`);
+    console.log("All books:", response.data);
+  } catch (error) {
+    handleError(error, "Fetching all books");
+  }
+}
+
+/**
+ * Retrieves books written by a specific author.
+ * @param {string} author - The author name to filter by.
  */
 async function getBooksByAuthor(author) {
   try {
-    const response = await axios.get(`http://localhost:5000/books?author=${author}`);
-    handleResponse(response, "Books by author");
+    const response = await axios.get(`${BASE_URL}/books?author=${author}`);
+    console.log(`Books by author "${author}":`, response.data);
   } catch (error) {
-    console.error("Error fetching books by author:", error.message);
+    handleError(error, "Fetching books by author");
   }
 }
 
 /**
- * Retrieves all books that match a given title.
- * Example: getBooksByTitle("Node Basics")
- * @param {string} title - The title of the book to search for
+ * Retrieves books that match a specific title.
+ * @param {string} title - The book title to filter by.
  */
 async function getBooksByTitle(title) {
   try {
-    const response = await axios.get(`http://localhost:5000/books?title=${title}`);
-    handleResponse(response, "Books by title");
+    const response = await axios.get(`${BASE_URL}/books?title=${title}`);
+    console.log(`Books with title "${title}":`, response.data);
   } catch (error) {
-    console.error("Error fetching books by title:", error.message);
+    handleError(error, "Fetching books by title");
   }
 }
 
 /**
- * Retrieves a book by its ISBN number.
- * Example: getBooksByISBN("1234567890")
- * @param {string} isbn - The ISBN of the book to search for
+ * Retrieves a book by its ISBN.
+ * @param {string} isbn - The ISBN identifier of the book.
  */
 async function getBooksByISBN(isbn) {
   try {
-    const response = await axios.get(`http://localhost:5000/books/${isbn}`);
-    handleResponse(response, "Book by ISBN");
+    const response = await axios.get(`${BASE_URL}/books/${isbn}`);
+    console.log(`Book with ISBN "${isbn}":`, response.data);
   } catch (error) {
-    console.error("Error fetching book by ISBN:", error.message);
+    handleError(error, "Fetching book by ISBN");
   }
 }
 
-// Example calls (you can comment these out before submission if not needed)
-getBooksByAuthor("John Doe");
-getBooksByTitle("Node Basics");
-getBooksByISBN("1234567890");
+/**
+ * Retrieves reviews for a specific book.
+ * @param {string} isbn - The ISBN identifier of the book.
+ */
+async function getBookReviews(isbn) {
+  try {
+    const response = await axios.get(`${BASE_URL}/review/${isbn}`);
+    console.log(`Reviews for ISBN "${isbn}":`, response.data);
+  } catch (error) {
+    handleError(error, "Fetching book reviews");
+  }
+}
+
+/**
+ * Adds or updates a review for a specific book.
+ * @param {string} isbn - The ISBN identifier of the book.
+ * @param {string} username - The user submitting the review.
+ * @param {string} review - The review text.
+ */
+async function addOrUpdateReview(isbn, username, review) {
+  try {
+    const response = await axios.put(`${BASE_URL}/review/${isbn}`, {
+      username,
+      review
+    });
+    console.log(`Review added/updated for ISBN "${isbn}":`, response.data);
+  } catch (error) {
+    handleError(error, "Adding/updating review");
+  }
+}
+
+/**
+ * Deletes a review for a specific book.
+ * @param {string} isbn - The ISBN identifier of the book.
+ */
+async function deleteReview(isbn) {
+  try {
+    const response = await axios.delete(`${BASE_URL}/review/${isbn}`);
+    console.log(`Review deleted for ISBN "${isbn}":`, response.data);
+  } catch (error) {
+    handleError(error, "Deleting review");
+  }
+}
+
+// Example calls (comment out before submission if not needed)
+getAllBooks();
+getBooksByAuthor("George Orwell");
+getBooksByTitle("1984");
+getBooksByISBN("3");
+getBookReviews("3");
+addOrUpdateReview("3", "hai", "A timeless classic!");
+deleteReview("3");
 
 // Export functions for testing or reuse
-module.exports = { getBooksByAuthor, getBooksByTitle, getBooksByISBN };
+module.exports = {
+  getAllBooks,
+  getBooksByAuthor,
+  getBooksByTitle,
+  getBooksByISBN,
+  getBookReviews,
+  addOrUpdateReview,
+  deleteReview
+};
