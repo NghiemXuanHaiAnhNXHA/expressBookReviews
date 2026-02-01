@@ -1,10 +1,21 @@
 const axios = require('axios');
 
+// Helper function to handle responses
+function handleResponse(response, context) {
+  if (response.status === 200) {
+    console.log(`${context}:`, response.data);
+  } else if (response.status === 404) {
+    console.log(`${context}: Not found`);
+  } else {
+    console.log(`${context}: Unexpected error (status ${response.status})`);
+  }
+}
+
 // Get books by author
 async function getBooksByAuthor(author) {
   try {
     const response = await axios.get(`http://localhost:5000/books?author=${author}`);
-    console.log("Books by author:", response.data);
+    handleResponse(response, "Books by author");
   } catch (error) {
     console.error("Error fetching books by author:", error.message);
   }
@@ -14,7 +25,7 @@ async function getBooksByAuthor(author) {
 async function getBooksByTitle(title) {
   try {
     const response = await axios.get(`http://localhost:5000/books?title=${title}`);
-    console.log("Books by title:", response.data);
+    handleResponse(response, "Books by title");
   } catch (error) {
     console.error("Error fetching books by title:", error.message);
   }
@@ -24,13 +35,13 @@ async function getBooksByTitle(title) {
 async function getBooksByISBN(isbn) {
   try {
     const response = await axios.get(`http://localhost:5000/books/${isbn}`);
-    console.log("Book by ISBN:", response.data);
+    handleResponse(response, "Book by ISBN");
   } catch (error) {
     console.error("Error fetching book by ISBN:", error.message);
   }
 }
 
-// Example calls (you can comment these out before submission)
+// Example calls (comment out before submission if needed)
 getBooksByAuthor("John Doe");
 getBooksByTitle("Node Basics");
 getBooksByISBN("1234567890");
