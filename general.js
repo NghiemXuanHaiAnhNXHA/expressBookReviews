@@ -1,8 +1,11 @@
+// Import Axios for making HTTP requests
 const axios = require('axios');
 
 /**
  * Helper function to handle HTTP responses consistently.
- * Prints user-friendly messages depending on the status code.
+ * It checks the status code and prints user-friendly messages.
+ * @param {object} response - Axios response object
+ * @param {string} context - Description of the request (author/title/ISBN)
  */
 function handleResponse(response, context) {
   if (response.status === 200) {
@@ -16,7 +19,8 @@ function handleResponse(response, context) {
 
 /**
  * Retrieves all books written by a given author.
- * @param {string} author - The name of the author to search for.
+ * Example: getBooksByAuthor("John Doe")
+ * @param {string} author - The name of the author to search for
  */
 async function getBooksByAuthor(author) {
   try {
@@ -29,7 +33,8 @@ async function getBooksByAuthor(author) {
 
 /**
  * Retrieves all books that match a given title.
- * @param {string} title - The title of the book to search for.
+ * Example: getBooksByTitle("Node Basics")
+ * @param {string} title - The title of the book to search for
  */
 async function getBooksByTitle(title) {
   try {
@@ -42,7 +47,8 @@ async function getBooksByTitle(title) {
 
 /**
  * Retrieves a book by its ISBN number.
- * @param {string} isbn - The ISBN of the book to search for.
+ * Example: getBooksByISBN("1234567890")
+ * @param {string} isbn - The ISBN of the book to search for
  */
 async function getBooksByISBN(isbn) {
   try {
@@ -53,7 +59,10 @@ async function getBooksByISBN(isbn) {
   }
 }
 
-// Example calls (comment out before submission if not needed)
+// Example calls (you can comment these out before submission if not needed)
 getBooksByAuthor("John Doe");
 getBooksByTitle("Node Basics");
 getBooksByISBN("1234567890");
+
+// Export functions for testing or reuse
+module.exports = { getBooksByAuthor, getBooksByTitle, getBooksByISBN };
